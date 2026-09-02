@@ -27,8 +27,8 @@ device to the set it uses. `fan-01` deliberately uses `sys2`.
    `tests/test_provision_certs.sh` checks that it still does.
 4. Tell the Pi who it is: `echo <device-id> | sudo tee /etc/pihome/device`.
 
-`pihome.credentials` also falls back to the old `_globalConfig/_sysN/` layout,
-so a Pi that has not been migrated keeps authenticating.
+Set `PIHOME_CERT_DIR` to override the location entirely - useful if the
+credentials live outside the checkout.
 
 ## Outstanding
 

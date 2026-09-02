@@ -13,9 +13,9 @@ One directory per credential set under `secrets/`, never committed. See
 `devices.json` maps a device to the set it authenticates with — not always its
 own name. `fan-01` uses `sys2`.
 
-`pihome.credentials.certs_for()` also falls back to the old
-`_globalConfig/_sysN/` layout, so a Pi that has not been migrated keeps
-working.
+`pihome.credentials.certs_for()` looks in `secrets/<set>/`, or in
+`PIHOME_CERT_DIR` if that is set. It accepts either a device id or a raw
+credential-set name.
 
 ## Outstanding security work
 

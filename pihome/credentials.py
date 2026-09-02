@@ -1,8 +1,8 @@
 """Where a device's AWS IoT certificate and key live.
 
-Resolution order is deliberate: secrets/ is where credentials belong, but the
-legacy _globalConfig/_sysN/ layout is checked as a fallback so a running Pi
-keeps authenticating through the restructure without being touched.
+One directory per credential set under secrets/, or wherever PIHOME_CERT_DIR
+points. devices.json maps a device to the set it authenticates with, which is
+not always its own name - fan-01 uses sys2.
 """
 import os
 
@@ -30,7 +30,6 @@ def _candidate_dirs(name):
     if override:
         yield override
     yield os.path.join(_REPO, "secrets", name)
-    yield os.path.join(_REPO, "_globalConfig", "_" + name)   # legacy layout
 
 
 def _find_root_ca(folder):
