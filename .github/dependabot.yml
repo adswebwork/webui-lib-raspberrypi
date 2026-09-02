@@ -21,8 +21,16 @@ updates:
     # The Pi-only wheels are installed from apt on the device, not resolved
     # here; pyproject lists them so a node can pip install its own extra.
     # Bumping them in this repo would be noise.
+    #
+    # setuptools is different: Dependabot raises the *lower* bound of the
+    # [build-system] requires, and setuptools 83+ needs Python >= 3.10 while
+    # the fleet runs 3.9. Taking that bump makes `pip install -e .` fail on
+    # the hardware - the build backend cannot be installed at all. `>=61` is
+    # already correct: 3.9 resolves 82.0.1, 3.13 resolves the latest. Drop
+    # this entry once every Pi is on 3.10 or newer. (Closed PR #4.)
     ignore:
       - dependency-name: RPi.GPIO
       - dependency-name: picamera2
       - dependency-name: sense-hat
       - dependency-name: sense-emu
+      - dependency-name: setuptools
