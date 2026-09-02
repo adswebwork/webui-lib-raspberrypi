@@ -8,13 +8,14 @@
 ```
 secrets/
   AmazonRootCA1.cer        public, tracked
-  sys1/
+  sensehat-01/
     private.pem.key        per-device, never committed
     certificate.pem.crt    per-device, never committed
 ```
 
-One directory per *credential set*, not per device — `devices.json` maps a
-device to the set it uses. `fan-01` deliberately uses `sys2`.
+One directory per *credential set*. Normally that is the device's own id;
+`devices.json` can point a device at a different set when two devices share a
+certificate.
 
 ## Provisioning a device
 
@@ -32,9 +33,6 @@ credentials live outside the checkout.
 
 ## Outstanding
 
-- **Rotate every existing certificate.** They were committed to the previous
-  repository (`adswebwork/raspberrypi`, private) and remain in its history.
-  Nothing secret is in this repository's history - but moving does not revoke
-  anything. Until rotation, that old repository is where the working
-  certificates come from; see [`../docs/aws-iot.md`](../docs/aws-iot.md).
-- **`camera-01` has never been provisioned** — it has no credential set at all.
+- **No device is provisioned.** The fleet is being stood up on a new AWS
+  account — see [`../docs/aws-iot.md`](../docs/aws-iot.md). Set `provisioned`
+  to `true` in `devices.json` as each node connects.

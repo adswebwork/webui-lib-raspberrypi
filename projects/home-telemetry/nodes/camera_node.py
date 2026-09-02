@@ -5,8 +5,7 @@ Formerly _globalConfig/sys4.py, which had never run - it referenced
 vars.sys4ca (never defined) and called a Sense HAT temperature function on a
 Pi with no Sense HAT.
 
-This node is NOT yet provisioned: there is no secrets/sys4/ credential set.
-See secrets/README.md.
+Not yet provisioned - no node is. See docs/aws-iot.md.
 
     python3 nodes/camera_node.py
 """

@@ -55,11 +55,10 @@ topic nobody is publishing:
 
 ## Known
 
-- **`camera-01` has never run.** No `secrets/sys4/` credential set exists. The
-  old `sys4.py` referenced `vars.sys4ca`, which was never defined, so it
-  crashed on import.
-- **`fan-01` authenticates with `sys2`'s certificate.** Long-standing; recorded
-  in `devices.json` rather than left as a surprise in the code.
+- **`camera-01` has never run.** Its predecessor script referenced
+  `vars.sys4ca`, which was never defined, so it crashed on import.
+- **No device is provisioned.** The fleet is being stood up on a new AWS
+  account; see [`../../docs/aws-iot.md`](../../docs/aws-iot.md).
 - **`mains_node` uses BOARD pin numbering**, unlike the rest. Its relay board
   is wired that way. A third LED was assigned to pin 35, which relay3 already
   claims — unresolved, see `docs/pinmap.md`.

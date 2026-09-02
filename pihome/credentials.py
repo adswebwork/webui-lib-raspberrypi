@@ -1,8 +1,9 @@
-"""Where a device's AWS IoT certificate and key live.
+"""Where a device's AWS IoT certificate and key live, and which endpoint to
+reach.
 
 One directory per credential set under secrets/, or wherever PIHOME_CERT_DIR
-points. devices.json maps a device to the set it authenticates with, which is
-not always its own name - fan-01 uses sys2.
+points. A device uses the set named by `credentials` in devices.json, and its
+own id when that is not set - which is the simple case and the default.
 """
 import os
 
@@ -10,15 +11,36 @@ from pihome import devices
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-ENDPOINT = os.environ.get(
-    "PIHOME_IOT_ENDPOINT", "a2r4022mytw4qr-ats.iot.us-east-1.amazonaws.com")
 PORT = int(os.environ.get("PIHOME_IOT_PORT", "8883"))
 
 _ROOT_CA_NAMES = ("AmazonRootCA1.cer", "AmazonRootCA1.pem", "root-CA.crt")
 
 
 def endpoint():
-    return ENDPOINT
+    """The AWS IoT endpoint to connect to.
+
+    $PIHOME_IOT_ENDPOINT first, then `iot_endpoint` in devices.json. There is
+    deliberately no built-in default: an endpoint identifies one AWS account,
+    and a wrong one fails as a TLS timeout on a Pi with no screen - which is
+    indistinguishable from a network problem and takes an evening to diagnose.
+    Refusing to guess turns that into one line of text.
+    """
+    env = os.environ.get("PIHOME_IOT_ENDPOINT")
+    if env and env.strip():
+        return env.strip()
+
+    try:
+        from pihome import devices
+        configured = devices.iot_endpoint()
+    except Exception:
+        configured = None
+    if configured:
+        return configured
+
+    raise RuntimeError(
+        "no AWS IoT endpoint configured. Set \"iot_endpoint\" in devices.json "
+        "to your account's endpoint, or export PIHOME_IOT_ENDPOINT. Find it "
+        "with: aws iot describe-endpoint --endpoint-type iot:Data-ATS")
 
 
 def port():

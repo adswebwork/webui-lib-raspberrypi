@@ -4,12 +4,11 @@ Scripts for a five-Pi home automation fleet, organised so that starting a new
 project means copying known-good code rather than remembering where the last
 one lived.
 
-> **This repository starts from a clean history.** It replaces the private
-> `adswebwork/raspberrypi`, whose history carries AWS IoT device certificates
-> that cannot be un-committed. Nothing secret is tracked here and CI runs
-> `gitleaks` on every push to keep it that way. The old repository is retained
-> only until those certificates are rotated - see
-> [`docs/aws-iot.md`](docs/aws-iot.md).
+> **No AWS account is attached.** The account this fleet previously used is
+> gone, and its certificates with it. Nothing connects until an endpoint,
+> policy, thing and certificate exist — see [`docs/aws-iot.md`](docs/aws-iot.md).
+> This repository has a clean history and CI runs `gitleaks` on every push, so
+> no credential has ever been committed here.
 
 ```
 recipes/     copy from here   single-file scripts, one per hardware task
@@ -135,8 +134,7 @@ always knows where a reading came from. See [`schema/topics.md`](schema/topics.m
 
 ## Before you rely on this
 
-- **Rotate the AWS IoT certificates.** They were committed and remain in git
-  history. See [`docs/aws-iot.md`](docs/aws-iot.md).
+- **Stand up the AWS account.** No endpoint, policy or certificate exists yet; the fleet cannot publish until they do. See [`docs/aws-iot.md`](docs/aws-iot.md).
 - **`camera-01` has never run** — it has no credentials.
 - **BOARD pin 35 is claimed twice.** See [`docs/pinmap.md`](docs/pinmap.md).
 

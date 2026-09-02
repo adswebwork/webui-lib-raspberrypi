@@ -23,9 +23,25 @@ def test_unknown_device_error_lists_known_ids():
         raise AssertionError("expected KeyError")
 
 
-def test_fan_node_authenticates_as_sys2():
-    """Records existing behaviour: the fan node has always used sys2's cert."""
-    assert devices.credentials_name("fan-01") == "sys2"
+def test_credential_set_defaults_to_the_device_id():
+    """The simple case: a device uses a set named after itself."""
+    for device in devices.all():
+        assert devices.credentials_name(device) == device
+
+
+def test_a_device_can_name_a_different_credential_set(monkeypatch):
+    """Two devices sharing one certificate has to stay expressible - the old
+    fleet did exactly that - but it is recorded as data, not hidden in code."""
+    monkeypatch.setattr(devices, "_cache", {
+        "devices": {"fan-01": {"role": "actuator", "credentials": "shared-01"}}})
+    assert devices.credentials_name("fan-01") == "shared-01"
+
+
+def test_nothing_is_flagged_provisioned_yet():
+    """The fleet is being stood up on a new AWS account; no node has a
+    certificate. A registry claiming otherwise sends someone hunting for
+    credentials that were never created."""
+    assert not any(spec.get("provisioned") for spec in devices.all().values())
 
 
 def test_camera_is_flagged_unprovisioned():

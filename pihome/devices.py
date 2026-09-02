@@ -25,6 +25,16 @@ def site():
     return _load().get("site", "home")
 
 
+def iot_endpoint():
+    """The fleet's AWS IoT endpoint, or None if it has not been set.
+
+    Fleet-level, so it lives beside `site` rather than being repeated per
+    device. None is the honest default: an endpoint belongs to one AWS
+    account, and this repository does not ship with one.
+    """
+    return _load().get("iot_endpoint") or None
+
+
 def get(device_id):
     """One device's spec. Raises KeyError with the known ids listed."""
     registry = all()

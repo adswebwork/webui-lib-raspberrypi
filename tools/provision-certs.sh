@@ -6,12 +6,12 @@
 # certificates - do that in the AWS IoT console, then place the files as
 # described in secrets/README.md and run this to check they work.
 #
-#   tools/provision-certs.sh sys1
+#   tools/provision-certs.sh sensehat-01
 set -euo pipefail
 
 DEVICE="${1:-}"
 if [ -z "$DEVICE" ]; then
-    echo "usage: $0 <credential-set>   e.g. $0 sys1" >&2
+    echo "usage: $0 <credential-set>   e.g. $0 sensehat-01" >&2
     exit 64
 fi
 

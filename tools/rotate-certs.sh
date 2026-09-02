@@ -14,8 +14,9 @@
 # right now, so nothing can break today, but the order is the same next time
 # when something can.
 #
-# Needs the AWS CLI, configured for the account that owns the IoT endpoint in
-# docs/aws-iot.md. The certificate ids to revoke are listed there.
+# Needs the AWS CLI, configured for the account that owns the IoT endpoint set
+# in devices.json. `new` is also how the fleet is provisioned the first time -
+# see docs/aws-iot.md.
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

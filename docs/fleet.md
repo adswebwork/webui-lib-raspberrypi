@@ -10,10 +10,10 @@ web UI should read to render a device list before any message arrives.
 
 | Device | Role | Hardware | Credentials | Provisioned |
 |---|---|---|---|---|
-| `sensehat-01` | telemetry | Sense HAT | `sys1` | yes |
-| `mains-01` | actuator | 4 relays, PIR (BOARD pins) | `sys2` | yes |
-| `fan-01` | actuator | relay (BCM 26) | `sys2` | yes |
-| `camera-01` | camera | Pi camera | `sys4` | **no** |
+| `sensehat-01` | telemetry | Sense HAT | `sensehat-01` | no |
+| `mains-01` | actuator | 4 relays, PIR (BOARD pins) | `mains-01` | no |
+| `fan-01` | actuator | relay (BCM 26) | `fan-01` | no |
+| `camera-01` | camera | Pi camera | `camera-01` | no |
 | `spare-01` | spare | — | — | no |
 
 **The mapping from a physical Pi to a device id is inferred** from what each
@@ -35,7 +35,8 @@ echo sensehat-01 | sudo tee /etc/pihome/device
 
 ## Notes
 
-- **`fan-01` authenticates with `sys2`'s certificate.** Long-standing; recorded
-  in `devices.json` as data rather than hidden in a call.
-- **`camera-01` has never run.** The old `sys4.py` referenced a variable that
-  was never defined, so it crashed on import, and no credentials exist for it.
+- **No device is provisioned.** The fleet is being stood up on a new AWS
+  account; see [`aws-iot.md`](aws-iot.md).
+
+- **`camera-01` has never run.** Its predecessor script referenced a
+  variable that was never defined, so it crashed on import.
