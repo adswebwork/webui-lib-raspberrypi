@@ -1,0 +1,12 @@
+# These scripts run on Raspberry Pi OS. CRLF line endings break shebangs
+# ("bad interpreter: /bin/bash^M") and must never be committed.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.xlsx binary
+*.zip binary
+*.cer binary
+*.crt binary
+*.key binary
+*.pem binary

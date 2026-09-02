@@ -1,0 +1,15 @@
+# Assembled from the `requires:` lines of the recipes this project forked.
+# Install only what the node you are running needs.
+
+# camera_node
+picamera2            # via: sudo apt install python3-picamera2
+gpiozero             # PIR motion sensor
+
+# kennel_node
+sense-hat            # via: sudo apt install python3-sense-hat
+
+# alert_node
+gpiozero             # relay
+
+# all nodes
+AWSIoTPythonSDK

@@ -1,0 +1,31 @@
+{
+  "_comment": "Per-node settings for the home telemetry fleet. Each node's \"device\" says which Pi it is meant to run on. It is the weakest identity source, not the authority: $PIHOME_DEVICE and /etc/pihome/device both override it, because they describe the machine. It is used when the Pi says nothing, and a disagreement is logged - see pihome.identity.assume().",
+  "system_config": {
+    "title": "Home Telemetry"
+  },
+  "nodes": {
+    "sensehat_node": {
+      "device": "sensehat-01",
+      "publish_interval_s": 60,
+      "rotation": 90
+    },
+    "mains_node": {
+      "device": "mains-01",
+      "pin_mode": "BOARD"
+    },
+    "fan_node": {
+      "device": "fan-01",
+      "source_device": "sensehat-01",
+      "output_pin": 26,
+      "pin_mode": "BCM"
+    },
+    "camera_node": {
+      "device": "camera-01",
+      "publish_interval_s": 300
+    }
+  },
+  "thresholds": {
+    "ideal_f": 80,
+    "hysteresis_f": 2
+  }
+}

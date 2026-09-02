@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "site": "home",
+  "device": "sensehat-01",
+  "metric": "temperature",
+  "value": 79,
+  "unit": "F",
+  "ts": "2026-09-01T18:22:03.412Z",
+  "seq": 412,
+  "boot_id": "9f2c1e",
+  "tags": { "sensor": "sense-hat", "room": "office" }
+}

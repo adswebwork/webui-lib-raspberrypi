@@ -1,0 +1,104 @@
+# The point of this repo's restructure is that the code runs and is tested on a
+# machine that is not a Raspberry Pi. Nothing enforced that, so this does.
+#
+# No Pi, no AWS account, no certificate: hardware comes from gpiozero's mock
+# pins and tools/devshim.
+#
+# These job names are what a branch ruleset should require before merge:
+#   test (3.9)   test (3.13)   shell   secrets
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A new push supersedes the run in flight; no point finishing the old one.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 is what the fleet actually runs; 3.13 catches what is coming.
+        # Both matter - the code avoids f-strings and tomllib for this reason.
+        python-version: ["3.9", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        # Only the dev extra. The Pi-only wheels (RPi.GPIO, picamera2,
+        # sense-hat) do not build here and are not needed: tools/devshim and
+        # gpiozero's mock factory stand in for them.
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        # The floor is a ratchet against backsliding, not a target. Raise it
+        # when coverage rises; never lower it to make a red build green.
+        run: pytest -q --cov=pihome --cov-report=term-missing --cov-fail-under=65
+
+  shell:
+    # Five shell scripts, one of which writes systemd units as root and one of
+    # which handles private keys. `bash -n` only proves they parse.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck
+        run: shellcheck $(git ls-files '*.sh') tools/dev
+
+      - name: Credential-handling self-test
+        # Builds real RSA and EC key pairs with openssl and checks
+        # provision-certs.sh tells a match, a mismatch and an unreadable key
+        # apart. Runs nowhere near a real credential.
+        run: tests/test_provision_certs.sh
+
+  secrets:
+    # This repo has already shipped a credential: an Amazon LWA clientSecret
+    # sat in a tracked .json because the .gitignore cleanup globbed only
+    # .key/.pem/.crt/.zip. A scanner does not care about file extensions.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.28.0
+        run: |
+          curl -sSfL \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          ./gitleaks version
+
+      - name: Scan the working tree
+        # The checkout, not the history. History carries 14 findings that
+        # predate this repo's cleanup and cannot be un-committed - the fix for
+        # those is revoking the credentials, not a build step. Scanning history
+        # here would mean a permanently red check that everyone learns to
+        # ignore, which is worse than no check.
+        run: ./gitleaks dir --no-banner --redact --verbose .
+
+      - name: Scan the commits this PR adds
+        # Catches a secret added and then deleted within the same branch, which
+        # a working-tree scan cannot see.
+        if: github.event_name == 'pull_request'
+        run: |
+          ./gitleaks git --no-banner --redact --verbose \
+            --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" .

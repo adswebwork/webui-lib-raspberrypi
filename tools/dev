@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+# Run any Pi script on a development machine.
+#
+#   tools/dev python3 recipes/sensehat/read_temperature.py
+#   tools/dev python3 -m pytest tests/
+#
+# Sense HAT calls go to the desktop emulator (pip3 install sense-emu, then run
+# `sense_emu_gui`), and gpiozero pins are mocked, so nothing needs real hardware.
+set -eu
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+export PYTHONPATH="$REPO/tools/devshim:$REPO:${PYTHONPATH:-}"
+export GPIOZERO_PIN_FACTORY="${GPIOZERO_PIN_FACTORY:-mock}"
+export PIHOME_DEVICE="${PIHOME_DEVICE:-dev-local}"
+exec "$@"

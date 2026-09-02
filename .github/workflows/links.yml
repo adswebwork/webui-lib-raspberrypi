@@ -1,0 +1,36 @@
+# External URLs rot, but slowly, and checking them needs the network - which
+# makes the check flaky and occasionally rate-limited. That is a bad merge
+# gate, so it runs weekly instead and never blocks a PR.
+#
+# Relative links are a different matter: a file move breaks them immediately
+# and silently. Those are checked by tests/test_docs_links.py, in the suite,
+# on every PR.
+name: External links
+
+on:
+  schedule:
+    - cron: "0 9 * * 1"        # Monday morning
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check external URLs
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # Relative links are covered by the test suite; only look outward.
+          args: >-
+            --no-progress
+            --include-verbatim
+            --exclude-path _archive
+            --scheme https --scheme http
+            --accept 200,206,429
+            "**/*.md"
+          fail: false
+        continue-on-error: true

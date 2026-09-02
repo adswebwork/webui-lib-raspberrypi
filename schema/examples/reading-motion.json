@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "site": "home",
+  "device": "camera-01",
+  "metric": "motion",
+  "value": true,
+  "unit": "bool",
+  "ts": "2026-09-01T18:22:05.008Z",
+  "seq": 7,
+  "boot_id": "3ab991",
+  "tags": { "image": "2026-09-01-182205.jpg" }
+}

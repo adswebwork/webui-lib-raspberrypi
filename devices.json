@@ -1,0 +1,50 @@
+{
+  "site": "home",
+  "_comment": "The fleet registry. Device identity lives here, not in code. A web UI reads this to render the device list before any MQTT message arrives. Hardware-to-device mapping is inferred from what each script drives and has NOT been confirmed against the physical Pis - verify before relying on it.",
+  "devices": {
+    "sensehat-01": {
+      "role": "telemetry",
+      "hardware": ["sense-hat"],
+      "room": "office",
+      "credentials": "sys1",
+      "legacy_id": "sys1",
+      "pin_mode": null,
+      "publishes": ["temperature", "humidity", "pressure"],
+      "provisioned": true
+    },
+    "mains-01": {
+      "role": "actuator",
+      "hardware": ["relay-x4", "pir"],
+      "credentials": "sys2",
+      "legacy_id": "sys2",
+      "pin_mode": "BOARD",
+      "publishes": ["motion"],
+      "provisioned": true
+    },
+    "fan-01": {
+      "role": "actuator",
+      "hardware": ["relay"],
+      "credentials": "sys2",
+      "_credentials_note": "Deliberately sys2, not sys3. This records existing behaviour: the fan node has always connected with sys2's certificate. Recorded as data rather than hidden in a call.",
+      "legacy_id": "sys3",
+      "pin_mode": "BCM",
+      "subscribes": ["temperature"],
+      "provisioned": true
+    },
+    "camera-01": {
+      "role": "camera",
+      "hardware": ["picamera"],
+      "credentials": "sys4",
+      "legacy_id": "sys4",
+      "pin_mode": "BCM",
+      "publishes": ["motion"],
+      "provisioned": false,
+      "_provisioned_note": "Has never connected. No secrets/sys4/ directory exists; this node needs its own AWS IoT thing and certificate."
+    },
+    "spare-01": {
+      "role": "spare",
+      "hardware": [],
+      "provisioned": false
+    }
+  }
+}

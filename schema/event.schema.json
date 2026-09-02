@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/adswebwork/webui-lib-raspberrypi/schema/event.schema.json",
+  "title": "Event",
+  "description": "Something that happened on a device which is not a measurement.",
+  "type": "object",
+  "required": ["v", "site", "device", "kind", "ts"],
+  "additionalProperties": false,
+  "properties": {
+    "v": { "type": "integer", "const": 1 },
+    "site": { "type": "string" },
+    "device": { "type": "string" },
+    "kind": {
+      "type": "string",
+      "examples": ["online", "offline", "motion", "capture", "alarm", "error"]
+    },
+    "level": { "type": "string", "enum": ["info", "warn", "error"] },
+    "message": { "type": "string" },
+    "ts": { "type": "string", "format": "date-time" },
+    "seq": { "type": "integer", "minimum": 1 },
+    "boot_id": { "type": "string" },
+    "tags": {
+      "type": "object",
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    }
+  }
+}

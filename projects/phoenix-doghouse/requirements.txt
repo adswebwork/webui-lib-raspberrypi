@@ -1,0 +1,5 @@
+# Install only what the node you are running needs.
+sense-hat            # climate_node
+RPi.GPIO             # sustenance_node, status_node - BOARD numbering + PWM
+picamera2            # camera_node
+AWSIoTPythonSDK      # all nodes

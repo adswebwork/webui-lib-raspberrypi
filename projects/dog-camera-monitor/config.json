@@ -1,0 +1,37 @@
+{
+  "_comment": "Everything tunable about this project. Each node's \"device\" says which Pi it is meant to run on. It is the weakest identity source, not the authority: $PIHOME_DEVICE and /etc/pihome/device both override it, because they describe the machine. It is used when the Pi says nothing, and a disagreement is logged - see pihome.identity.assume().",
+  "system_config": {
+    "title": "Dog Camera Monitor",
+    "subject": "Phoenix"
+  },
+  "nodes": {
+    "camera_node": {
+      "device": "camera-01",
+      "pir_pin": 4,
+      "capture_interval_s": 300,
+      "motion_cooldown_s": 30,
+      "keep_images": 500
+    },
+    "kennel_node": {
+      "device": "sensehat-01",
+      "publish_interval_s": 60,
+      "rotation": 90
+    },
+    "alert_node": {
+      "device": "fan-01",
+      "source_device": "sensehat-01",
+      "output_pin": 26
+    }
+  },
+  "thresholds": {
+    "temp_high_f": 85,
+    "temp_low_f": 45,
+    "hysteresis_f": 2
+  },
+  "messages": {
+    "standby": "kennel quiet",
+    "motion": "movement in the kennel",
+    "too_hot": "kennel above safe temperature, fan on",
+    "too_cold": "kennel below safe temperature"
+  }
+}

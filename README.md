@@ -1,0 +1,112 @@
+# webui-lib-raspberrypi
+
+Scripts for a five-Pi home automation fleet, organised so that starting a new
+project means copying known-good code rather than remembering where the last
+one lived.
+
+> **This repository starts from a clean history.** It replaces the private
+> `adswebwork/raspberrypi`, whose history carries AWS IoT device certificates
+> that cannot be un-committed. Nothing secret is tracked here and CI runs
+> `gitleaks` on every push to keep it that way. The old repository is retained
+> only until those certificates are rotated - see
+> [`docs/aws-iot.md`](docs/aws-iot.md).
+
+```
+recipes/     copy from here   single-file scripts, one per hardware task
+pihome/      import from here shared core: wire format, MQTT, display, identity
+projects/    real deployments each owns its code and config
+schema/      the contract      JSON Schema the web UI reads
+```
+
+**Copy from `recipes/`. Import from `pihome/`.** A recipe is a starting point
+and forking one is the point. `pihome` is the contract — fork it and one Pi
+quietly disagrees with the rest of the fleet.
+
+## Starting something new
+
+```bash
+cp -r projects/_template projects/my-project
+```
+
+Then find what you need in [`recipes/README.md`](recipes/README.md), which is
+indexed by task — *"I want to photograph on motion → `camera/capture_on_motion.py`"*.
+Copy those files into `projects/my-project/lib/` and edit them freely.
+
+[`projects/dog-camera-monitor/`](projects/dog-camera-monitor/) is the worked
+example, and its README shows which recipe each file came from and what changed.
+
+## The fleet
+
+Five Pis: one on a Touch pHAT, one on a breadboard with lights and a relay, one
+Pi 3 with a Sense HAT, one with a camera, one spare. See
+[`docs/fleet.md`](docs/fleet.md) and `devices.json`.
+
+| Project | What it does |
+|---|---|
+| [`home-telemetry`](projects/home-telemetry/) | The original fleet: temperature in, fan out |
+| [`dog-camera-monitor`](projects/dog-camera-monitor/) | Kennel camera, climate, alerts |
+| [`phoenix-doghouse`](projects/phoenix-doghouse/) | Food, water and climate control |
+
+## Setup on a Pi
+
+```bash
+git clone https://github.com/adswebwork/webui-lib-raspberrypi.git
+cd webui-lib-raspberrypi
+
+# Install what THIS node needs, not everything. A camera Pi has no Sense HAT,
+# and RPi.GPIO/picamera2 will not build on a machine that is not a Pi.
+pip3 install -e ".[iot,sensehat]"     # sensehat-01
+# pip3 install -e ".[iot,gpio]"       # mains-01, fan-01
+# pip3 install -e ".[iot,camera]"     # camera-01
+
+echo sensehat-01 | sudo tee /etc/pihome/device
+```
+
+Prefer the apt packages where they exist — they are built against the system
+libraries: `sudo apt install python3-sense-hat python3-gpiozero
+python3-picamera2`. Each project also lists what its individual nodes need in
+its own `requirements.txt`.
+
+Provision that node's AWS IoT credentials into `secrets/<name>/` — see
+[`secrets/README.md`](secrets/README.md) — then install the service:
+
+```bash
+sudo tools/install-service.sh home-telemetry sensehat_node
+journalctl -u home-telemetry@sensehat_node -f
+```
+
+## Working without a Pi
+
+```bash
+tools/dev python3 recipes/sensehat/read_temperature.py
+python3 -m pytest tests/ -q
+```
+
+`tools/dev` supplies a Sense HAT emulator and mock GPIO pins. See
+[`docs/off-pi-dev.md`](docs/off-pi-dev.md).
+
+## What devices send
+
+Every message is a `Reading` or an `Event`, defined once in
+[`pihome/reading.py`](pihome/reading.py) and published as JSON Schema in
+[`schema/`](schema/).
+
+```json
+{"v": 1, "site": "home", "device": "sensehat-01", "metric": "temperature",
+ "value": 79, "unit": "F", "ts": "2026-09-01T18:22:03.412Z",
+ "seq": 412, "boot_id": "9f2c1e", "tags": {"room": "office"}}
+```
+
+The device is in the payload *and* the topic
+(`home/<device>/telemetry/<metric>`), so a consumer can subscribe to one Pi and
+always knows where a reading came from. See [`schema/topics.md`](schema/topics.md).
+
+## Before you rely on this
+
+- **Rotate the AWS IoT certificates.** They were committed and remain in git
+  history. See [`docs/aws-iot.md`](docs/aws-iot.md).
+- **`camera-01` has never run** — it has no credentials.
+- **BOARD pin 35 is claimed twice.** See [`docs/pinmap.md`](docs/pinmap.md).
+
+[`docs/history/2026-assessment.md`](docs/history/2026-assessment.md) records
+what this looked like before, and why it changed.

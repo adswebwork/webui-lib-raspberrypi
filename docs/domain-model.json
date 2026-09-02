@@ -1,0 +1,31 @@
+{
+  "_comment": "Domain model rescued from the Angular scaffold in _archive before it was deleted. This is the vocabulary the dog-house project was built around and the seed for a web UI's data model. Amazon Alexa clientId/clientSecret/productId were stripped - they were committed in plaintext and must be revoked in the Amazon developer console.",
+  "_dropped": [
+    "aws",
+    "clientId",
+    "clientSecret",
+    "productId"
+  ],
+  "animal_config": {
+    "food": 100,
+    "name": "Phoenix",
+    "tempSelected": 70,
+    "type": "Dog",
+    "water": 100
+  },
+  "messages": {
+    "bright": "light off",
+    "cold": "cold on",
+    "dark": "light on",
+    "hot": "heat on",
+    "hungry": "food on",
+    "picture": "light off",
+    "thirsty": "water on"
+  },
+  "room_config": {
+    "label": "Healthy Dog Smart House",
+    "logfile": "../data/phoenix-smart-dog-house.md",
+    "tempMax": 75,
+    "tempMin": 45
+  }
+}

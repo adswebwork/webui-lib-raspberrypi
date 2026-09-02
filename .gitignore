@@ -1,0 +1,48 @@
+# OS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Node
+node_modules/
+
+# Secrets — AWS IoT device credentials. Provision these onto each Pi
+# out-of-band (see README); never commit them.
+*.key
+*.pem
+*.pem.key
+*.pem.crt
+*.private.key
+connect_device_package.zip
+# Amazon root CAs are public and safe to keep tracked
+!AmazonRootCA*.cer
+!root-CA.crt
+
+# Runtime output
+photos/
+_log/
+**/_logs/
+**/data/
+*.jpg
+!docs/assets/*.jpg
+
+# Provisioned device credentials (see secrets/README.md)
+secrets/*/
+.gitnexus
+
+# pytest
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/

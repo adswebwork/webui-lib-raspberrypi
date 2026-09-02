@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/adswebwork/webui-lib-raspberrypi/schema/reading.schema.json",
+  "title": "Reading",
+  "description": "A single measurement published by one device. The contract between the Pi fleet and any consumer, including the web UI.",
+  "type": "object",
+  "required": ["v", "site", "device", "metric", "value", "unit", "ts"],
+  "additionalProperties": false,
+  "properties": {
+    "v": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version. Bumped only for breaking changes."
+    },
+    "site": { "type": "string", "description": "Logical location, e.g. 'home'." },
+    "device": {
+      "type": "string",
+      "description": "Which Pi sent this. Always present - the pre-v1 format had no device field, so two Pis publishing the same metric were indistinguishable."
+    },
+    "metric": {
+      "type": "string",
+      "examples": ["temperature", "humidity", "pressure", "motion", "uptime"]
+    },
+    "value": {
+      "type": ["number", "boolean", "string"],
+      "description": "A number for measurements, boolean for detectors. Strings only for text metrics such as ip_address."
+    },
+    "unit": {
+      "type": "string",
+      "examples": ["F", "C", "%", "hPa", "bool", "s", "text"]
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC, ISO-8601, milliseconds, trailing Z. Device-generated, so it can be wrong before NTP sync - see boot_id."
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonic counter within one process run."
+    },
+    "boot_id": {
+      "type": "string",
+      "description": "Random per process start. A Pi has no real-time clock, so between boot and NTP sync its timestamps jump. (boot_id, seq) gives a correct ordering that ts alone cannot."
+    },
+    "tags": {
+      "type": "object",
+      "description": "Free-form extras, so nobody needs to add top-level fields.",
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    }
+  }
+}

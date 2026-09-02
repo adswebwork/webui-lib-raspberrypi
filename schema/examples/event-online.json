@@ -1,0 +1,12 @@
+{
+  "v": 1,
+  "site": "home",
+  "device": "camera-01",
+  "kind": "online",
+  "level": "info",
+  "message": "camera node up",
+  "ts": "2026-09-01T18:20:00.114Z",
+  "seq": 1,
+  "boot_id": "3ab991",
+  "tags": {}
+}

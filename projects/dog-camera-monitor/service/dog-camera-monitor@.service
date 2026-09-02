@@ -1,0 +1,29 @@
+# Template unit: one instance per node. Install it with
+#
+#   sudo tools/install-service.sh dog-camera-monitor <node>
+#
+# which fills in @REPO@ and @USER@ from the actual clone. Do NOT copy this
+# file into /etc/systemd/system by hand - the placeholders are there because
+# the paths are not knowable until install time, and the previous version of
+# this file hard-coded /home/pi/raspberrypi, which is the same staleness the
+# @reboot cron lines it replaced were guilty of.
+#
+# %i is the node script name. Logs go to the journal:
+#   journalctl -u dog-camera-monitor@<node> -f
+
+[Unit]
+Description=Dog camera monitor (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+WorkingDirectory=@REPO@/projects/dog-camera-monitor
+Environment=PYTHONPATH=@REPO@
+ExecStart=/usr/bin/python3 @REPO@/projects/dog-camera-monitor/nodes/%i.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

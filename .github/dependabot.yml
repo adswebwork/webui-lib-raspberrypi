@@ -1,0 +1,28 @@
+# Keeps the CI actions current. Without this, actions/checkout@v4 and friends
+# sit at whatever tag they were pinned to on the day CI was written, including
+# through security advisories.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    labels: [dependencies]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: deps
+    labels: [dependencies]
+    # The Pi-only wheels are installed from apt on the device, not resolved
+    # here; pyproject lists them so a node can pip install its own extra.
+    # Bumping them in this repo would be noise.
+    ignore:
+      - dependency-name: RPi.GPIO
+      - dependency-name: picamera2
+      - dependency-name: sense-hat
+      - dependency-name: sense-emu

@@ -1,0 +1,29 @@
+{
+  "_comment": "Dog house settings. The animal profile came from the Angular scaffold's config.json - see docs/domain-model.json. Each node's \"device\" says which Pi it is meant to run on. It is the weakest identity source, not the authority: $PIHOME_DEVICE and /etc/pihome/device both override it, because they describe the machine. It is used when the Pi says nothing, and a disagreement is logged - see pihome.identity.assume().",
+  "system_config": {
+    "title": "Healthy Dog Smart House"
+  },
+  "animal": {
+    "name": "Phoenix",
+    "type": "Dog",
+    "food": 100,
+    "water": 100,
+    "temp_selected_f": 70
+  },
+  "thresholds": {
+    "temp_low_f": 45,
+    "temp_high_f": 75
+  },
+  "nodes": {
+    "climate_node": { "device": "sensehat-01", "interval_s": 60 },
+    "sustenance_node": { "device": "mains-01" },
+    "status_node": { "device": "mains-01", "blink_interval_s": 1 },
+    "camera_node": { "device": "camera-01", "interval_s": 300 }
+  },
+  "messages": {
+    "cold": "heat on",
+    "hot": "cool on",
+    "hungry": "food on",
+    "thirsty": "water on"
+  }
+}

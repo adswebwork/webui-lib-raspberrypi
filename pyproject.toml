@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pihome"
+version = "1.0.0"
+description = "Shared core for a Raspberry Pi home automation fleet"
+requires-python = ">=3.7"
+dependencies = []
+
+[project.optional-dependencies]
+# Installed per node, not globally - a camera Pi has no Sense HAT.
+sensehat = ["sense-hat"]
+gpio = ["gpiozero", "RPi.GPIO"]
+camera = ["picamera2"]
+iot = ["AWSIoTPythonSDK"]
+dev = ["pytest", "pytest-cov", "ruff>=0.15", "sense-emu", "gpiozero", "jsonschema"]
+
+[tool.setuptools.packages.find]
+include = ["pihome*"]
+
+[tool.ruff]
+exclude = ["_archive"]
+line-length = 100
+
+[tool.ruff.lint]
+# Stated explicitly rather than inherited. Ruff's *default* rule set is not
+# stable across releases - 0.16 widened it, which turned a clean tree into 142
+# findings without a line of code changing. Naming the rules means "ruff clean"
+# says the same thing on a Pi, on a laptop, and in CI next year.
+#
+# These four are the set this code was written against: pyflakes plus the
+# pycodestyle errors that matter. Widening it is a deliberate change with its
+# own diff, not something a `pip install -U` should do.
+select = ["E4", "E7", "E9", "F"]
