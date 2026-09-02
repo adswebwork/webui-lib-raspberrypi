@@ -15,7 +15,7 @@ sensehat = ["sense-hat"]
 gpio = ["gpiozero", "RPi.GPIO"]
 camera = ["picamera2"]
 iot = ["AWSIoTPythonSDK"]
-dev = ["pytest", "pytest-cov", "ruff>=0.15", "sense-emu", "gpiozero", "jsonschema"]
+dev = ["pytest", "pytest-cov", "ruff>=0.16.5", "sense-emu", "gpiozero", "jsonschema"]
 
 [tool.setuptools.packages.find]
 include = ["pihome*"]
