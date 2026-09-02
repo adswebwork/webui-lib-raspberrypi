@@ -40,8 +40,8 @@ def test_offset_is_overridable_without_editing_the_module():
 
 
 def test_result_is_a_whole_number():
-    """The legacy mirror does int() on this, so a fraction would break the old
-    fan subscriber during the changeover."""
+    """A hand-calibrated offset on a sensor sitting above a CPU does not
+    support a decimal place."""
     value = sensors.sense_hat_temperature_f(FakeSense(21.6667))
     assert isinstance(value, int)
 

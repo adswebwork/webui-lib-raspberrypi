@@ -39,22 +39,19 @@ A node never hard-codes its identity. It asks `pihome.identity`, which checks
 echo sensehat-01 | sudo tee /etc/pihome/device
 ```
 
-## Changeover
+## Bringing the fleet up
 
-`fan_node` currently subscribes to **both** the new envelope and the old flat
-`home/temperature` topic, so it keeps working whichever a publisher is using.
-`pihome.iot` likewise mirrors every reading onto the old topic.
+Every Pi is a clean Raspberry Pi OS install, so there is no changeover: nothing
+has ever run the pre-v1 flat topics, and the code that bridged them has been
+removed. Nodes publish and read the envelope only.
 
-Once every node publishes and reads the envelope, set `PIHOME_LEGACY_MIRROR=0`
-and drop `subscribe_legacy` from `fan_node`.
-
-Cut over in this order — the consumer last, so it is never reading a topic
-nobody is publishing:
+Bring them up in this order, the consumer last so it is never subscribed to a
+topic nobody is publishing:
 
 1. `sensehat-01` (publisher)
 2. `mains-01`
 3. `camera-01`
-4. `fan-01` (consumer) — then turn the mirror off
+4. `fan-01` (consumer)
 
 ## Known
 

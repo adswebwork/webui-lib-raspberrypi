@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pihome.reading import Event, Reading, from_json, is_legacy, upgrade_legacy
+from pihome.reading import Event, Reading, from_json
 
 
 def test_reading_roundtrips():
@@ -73,18 +73,6 @@ def test_unknown_fields_are_ignored_not_fatal():
     payload = json.loads(Reading("temperature", 79, "F").to_json())
     payload["future_field"] = "whatever"
     assert from_json(json.dumps(payload)).metric == "temperature"
-
-
-def test_legacy_detection_and_upgrade():
-    assert is_legacy('{"temp": "79"}')
-    assert not is_legacy(Reading("temperature", 79, "F").to_json())
-    upgraded = upgrade_legacy('{"temp": "79"}', "sensehat-01")
-    assert upgraded.value == 79.0 and upgraded.device == "sensehat-01"
-
-
-def test_legacy_upgrade_rejects_non_numeric():
-    with pytest.raises(ValueError):
-        upgrade_legacy('{"temp": "warm"}', "sensehat-01")
 
 
 def test_examples_match_the_schema_shape():

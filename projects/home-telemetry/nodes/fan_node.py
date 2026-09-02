@@ -69,9 +69,6 @@ def main():
     # that happens to report a temperature drive mains voltage.
     iot.subscribe_readings(_client, on_reading, device=SOURCE,
                            metric="temperature")
-    # The pre-schema topic too, until every publisher has changed over. It
-    # carries no device, so readings on it are attributed to the same source.
-    iot.subscribe_legacy(_client, on_reading, device_hint=SOURCE)
 
     try:
         while True:

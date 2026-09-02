@@ -5,19 +5,11 @@ verbatim into seven files, and the hand-built `'{"' + key + '": "' + value`
 payload construction that went with it.
 """
 import json
-import os
 
 from pihome import credentials, identity, log, topics
-from pihome.reading import Event, Reading, from_json, is_legacy, upgrade_legacy
+from pihome.reading import Event, from_json
 
 _logger = log.get_logger("iot")
-
-# While the fleet changes over, publish() also emits the old flat payload on
-# the old topic, so the existing fan subscriber keeps working untouched.
-# Set PIHOME_LEGACY_MIRROR=0 once every node reads the new envelope.
-LEGACY_MIRROR = os.environ.get("PIHOME_LEGACY_MIRROR", "1") != "0"
-
-_LEGACY_KEYS = {"temperature": ("temperature", "temp")}
 
 
 def connect(device=None, label="pihome"):
@@ -50,22 +42,6 @@ def publish(client, item, qos=1):
     client.publish(topic=topic, QoS=qos, payload=item.to_json())
     _logger.info("-> %s %s", topic,
                  getattr(item, "value", getattr(item, "message", "")))
-
-    if LEGACY_MIRROR and isinstance(item, Reading):
-        _publish_legacy(client, item, qos)
-
-
-def _publish_legacy(client, reading, qos):
-    """Mirror onto the pre-schema topic so old subscribers keep working."""
-    mapping = _LEGACY_KEYS.get(reading.metric)
-    if not mapping:
-        return
-    legacy_topic_key, legacy_field = mapping
-    topic = topics.LEGACY.get(legacy_topic_key)
-    if not topic:
-        return
-    client.publish(topic=topic, QoS=qos,
-                   payload=json.dumps({legacy_field: str(reading.value)}))
 
 
 def publish_event(client, kind, message="", level="info", **tags):
@@ -101,24 +77,6 @@ def subscribe_readings(client, callback, device="+", metric="#", qos=1):
 def subscribe_events(client, callback, device="+", qos=1):
     """Call `callback(event)` for each Event from the matching devices."""
     return _subscribe(client, topics.events(device), callback, qos)
-
-
-def subscribe_legacy(client, callback, device_hint, qos=1):
-    """Read the old flat topic during changeover, upgrading as it arrives."""
-    def _handler(_client, _userdata, message):
-        payload = message.payload
-        try:
-            item = upgrade_legacy(payload, device_hint) if is_legacy(payload) \
-                else from_json(payload)
-        except ValueError as exc:
-            _logger.warning("dropping legacy payload on %s: %s", message.topic, exc)
-            return
-        callback(item)
-
-    topic = topics.LEGACY["temperature"]
-    client.subscribe(topic, qos, _handler)
-    _logger.info("subscribed to legacy %s", topic)
-    return topic
 
 
 class MockClient:

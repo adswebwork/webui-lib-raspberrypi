@@ -34,13 +34,3 @@ def all_telemetry(metric="#"):
 
 def all_events():
     return "{}/+/event".format(_site())
-
-
-# The pre-schema topics. Kept so the changeover can mirror to both, and so the
-# bus monitor can still see legacy traffic. Delete once nothing publishes them.
-LEGACY = {
-    "temperature": "home/temperature",
-    "network": "network/message",
-    "pi": "registration/ipaddress",
-    "sensors": "security/sensors",
-}

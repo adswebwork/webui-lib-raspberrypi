@@ -16,14 +16,6 @@ def test_publish_emits_valid_json_on_the_device_topic():
     assert json.loads(payload)["device"] == "sensehat-01"
 
 
-def test_legacy_mirror_keeps_the_old_subscriber_working():
-    """The fan node reads {"temp": "..."} on home/temperature. It must not break."""
-    client = iot.MockClient()
-    iot.publish(client, Reading("temperature", 79, "F", device="sensehat-01"))
-    mirrored = [p for t, p in client.published if t == "home/temperature"]
-    assert json.loads(mirrored[0]) == {"temp": "79"}
-
-
 def test_subscriber_drops_bad_payloads_instead_of_dying():
     """One malformed message from one node must not take down a subscriber."""
     client = iot.MockClient()

@@ -23,14 +23,16 @@ Wildcards a consumer will want:
 and sorted on `ts` — the query shape a device dashboard needs. The old flat
 `home/temperature` topic could express no such rule.
 
-## Legacy topics
+## Topics that no longer exist
 
-Pre-v1, and still mirrored while the fleet changes over. Retire once every node
-reads the envelope (`PIHOME_LEGACY_MIRROR=0`).
+Pre-v1 the fleet published flat topics with no device, no timestamp and no
+unit. They are listed here as a record of what the envelope replaced, not as
+something still on the bus - no node publishes or subscribes to them, and the
+code that bridged them was removed once it was established that no deployed
+Pi had ever run the old scheme.
 
-| Topic | Old payload | Problem |
+| Topic | Old payload | Why it could not stay |
 |---|---|---|
 | `home/temperature` | `{"temp": "79"}` | no device, no time, no unit; more than one Pi published it |
 | `network/message` | `{"message": "..."}` | superseded by Event |
 | `registration/ipaddress` | `{"ipaddress": "..."}` | superseded by Reading `ip_address` |
-| `security/sensors` | `{"sensor": "..."}` | superseded by Event `motion` |

@@ -23,9 +23,9 @@ def celsius_to_fahrenheit(celsius):
 def sense_hat_temperature_f(sense, offset_f=SENSE_HAT_SELF_HEATING_OFFSET_F):
     """Ambient temperature in Fahrenheit, self-heating compensated.
 
-    Rounded to a whole degree, which is honest about the accuracy on offer and
-    keeps the legacy `{"temp": "79"}` mirror parseable by the old subscriber -
-    it does int() on that string, so a fractional reading would break it.
+    Rounded to a whole degree. The sensor sits above a CPU and is corrected by
+    a hand-calibrated offset, so a decimal place would be claiming precision
+    that is not there.
     """
     return round(celsius_to_fahrenheit(sense.get_temperature()) - offset_f)
 
