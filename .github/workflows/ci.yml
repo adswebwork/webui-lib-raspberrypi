@@ -32,7 +32,7 @@ jobs:
         python-version: ["3.9", "3.13"]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v5
         with:
@@ -57,7 +57,7 @@ jobs:
     # which handles private keys. `bash -n` only proves they parse.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: ShellCheck
         run: shellcheck $(git ls-files '*.sh') tools/dev
@@ -74,7 +74,7 @@ jobs:
     # .key/.pem/.crt/.zip. A scanner does not care about file extensions.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
