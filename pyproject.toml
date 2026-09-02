@@ -6,7 +6,12 @@ build-backend = "setuptools.build_meta"
 name = "pihome"
 version = "1.0.0"
 description = "Shared core for a Raspberry Pi home automation fleet"
-requires-python = ">=3.7"
+# Matches the oldest leg of the CI matrix. Declaring 3.7 while nothing
+# tested it was a promise with no evidence behind it: Raspberry Pi OS
+# ships 3.9 on Bullseye and 3.11 on Bookworm, and a Buster Pi on 3.7
+# would now be refused by pip at install time rather than failing later
+# in some unexercised corner.
+requires-python = ">=3.9"
 dependencies = []
 
 [project.optional-dependencies]

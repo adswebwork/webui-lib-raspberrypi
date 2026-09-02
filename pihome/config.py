@@ -1,7 +1,7 @@
 """Per-project JSON config, deep-merged over defaults.
 
-JSON rather than TOML deliberately: the fleet still runs Python 3.7 and 3.9,
-and tomllib only arrived in 3.11.
+JSON rather than TOML deliberately: the fleet runs Python 3.9, and tomllib
+only arrived in 3.11.
 """
 import json
 import os

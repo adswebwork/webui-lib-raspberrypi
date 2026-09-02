@@ -27,8 +27,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 3.9 is what the fleet actually runs; 3.13 catches what is coming.
-        # Both matter - the code avoids f-strings and tomllib for this reason.
+        # 3.9 is what the fleet actually runs and is the floor pyproject
+        # declares; 3.13 catches what is coming. The 3.9 leg is not decorative -
+        # it has already caught two things that were green on 3.13: a pytest
+        # version difference in log capture, and setuptools 84 dropping 3.9.
+        # What 3.9 rules out is tomllib (3.11) and 3.10+ syntax such as match
+        # and X | Y. Avoiding f-strings is a style choice, not a constraint -
+        # they have worked since 3.6.
         python-version: ["3.9", "3.13"]
 
     steps:
